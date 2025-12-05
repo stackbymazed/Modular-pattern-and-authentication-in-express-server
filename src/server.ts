@@ -1,7 +1,8 @@
 import express, { Request, Response } from 'express'
 import { Pool } from "pg"
 import config from './config'
-import { initDB } from './config/db'
+import { initDB, pool } from './config/db'
+import { userRoutes } from './modules/user/user.routes'
 
 const app = express()
 const port = config.Port
@@ -19,40 +20,9 @@ app.get('/', (req: Request, res: Response) => {
     res.send('server is Running port 3000')
 })
 
-//users CURD
-app.post("/users", async (req: Request, res: Response) => {
-    const { name, email } = req.body;
-    try {
-        const result = await pool.query(`INSERT INTO users(name,email) VALUES($1,$2) RETURNING *`, [name, email]);
-        console.log(result.rows[0]);
-        res.status(200).json({
-            success: true,
-            message: "Data inserted successfully.....!"
-        })
+//users CRUD
+app.use("/users",userRoutes)
 
-    } catch (err: any) {
-        res.status(404).json({
-            success: false,
-            message: err.message
-        })
-    }
-})
-
-app.get("/users", async (req: Request, res: Response) => {
-    try {
-        const result = await pool.query(`SELECT * FROM users`);
-        res.status(200).json({
-            success: true,
-            message: "Data is having successfully......!",
-            data: result.rows
-        })
-    } catch (err: any) {
-        res.status(500).json({
-            success: false,
-            message: err.message
-        })
-    }
-})
 
 app.get("/users/:id", async (req: Request, res: Response) => {
     try {
