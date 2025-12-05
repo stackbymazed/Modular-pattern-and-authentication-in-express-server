@@ -21,7 +21,7 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 //users CRUD
-app.use("/users",userRoutes)
+app.use("/users",userRoutes.router)
 
 
 app.get("/users/:id", async (req: Request, res: Response) => {
